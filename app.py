@@ -15,7 +15,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("New-Onset Sarcopenia Risk Predictor🫁")
+st.title("🫁  New-Onset Sarcopenia Risk Predictor")
 st.markdown(
     """
     **For patients with Chronic Lung Disease (CLD)**  
