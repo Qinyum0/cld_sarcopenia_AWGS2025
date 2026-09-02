@@ -148,6 +148,12 @@ if predict_btn:
 # 强制转换为字符串
 force_plot_html = str(force_plot_html)
 
+# 检查并嵌入（这里缩进正确）
+if force_plot_html.strip():
+    html(force_plot_html, height=300, width=700)
+else:
+    st.warning("SHAP force plot could not be generated.")
+
     # 在 Streamlit 中嵌入 HTML
     if force_plot_html.strip():
     html(force_plot_html, height=300, width=700)
