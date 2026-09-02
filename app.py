@@ -115,9 +115,9 @@ if predict_btn:
     st.caption(
         f"""
         **Risk interpretation**  
-        - **Low**  (< 10%)  : Regular follow-up recommended.  
-        - **Moderate** (10% – 25%) : Clinical awareness and lifestyle intervention.  
-        - **High** (> 25%) : Comprehensive geriatric assessment and specialized care.
+        - **Low**    : Regular follow-up recommended.  
+        - **Moderate**  : Clinical awareness and lifestyle intervention.  
+        - **High**  : Comprehensive geriatric assessment and specialized care.
         """
     )
 
