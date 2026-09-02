@@ -1,0 +1,187 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[2]:
+
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
+import shap
+import matplotlib.pyplot as plt
+
+# 设置页面配置
+st.set_page_config(
+    page_title="CLD Sarcopenia Risk Predictor",
+    page_icon="🫁",
+    layout="centered"
+)
+
+st.title("🫁Sarcopenia Risk Predictor")
+st.markdown(
+    """
+    **For patients with Chronic Lung Disease (CLD)**  
+    This tool predicts the probability of developing **sarcopenia within 4 years**  
+    based on four clinical features. Below the prediction, an interactive SHAP force plot  
+    explains how each feature contributes to the individual prediction.
+    """
+)
+
+# 加载模型、标准化器和 SHAP 解释器
+@st.cache_resource
+def load_artifacts():
+    model = joblib.load('cld_sarcopenia_model.pkl')
+    scaler = joblib.load('scaler.pkl')
+    # 创建 SHAP TreeExplainer（基于训练好的模型）
+    explainer = shap.TreeExplainer(model)
+    return model, scaler, explainer
+
+try:
+    model, scaler, explainer = load_artifacts()
+except FileNotFoundError as e:
+    st.error(f"❌ Model files not found: {e}. Ensure 'cld_sarcopenia_model.pkl' and 'scaler.pkl' are in the current directory.")
+    st.stop()
+    
+# 侧边栏：输入参数
+# -------------------------------
+st.sidebar.header("Patient Input")
+
+age = st.sidebar.number_input(
+    "Age (years)",
+    min_value=40, max_value=100, value=65, step=1,
+    help="Age in years."
+)
+
+bmi = st.sidebar.number_input(
+    "BMI (kg/m²)",
+    min_value=10.0, max_value=50.0, value=24.0, step=0.1,
+    help="Body Mass Index (weight / height²)."
+)
+
+cognition = st.sidebar.number_input(
+    "Total Cognition Score",
+    min_value=0.0, max_value=30.0, value=15.0, step=0.5,
+    help="Higher score indicates better cognitive function."
+)
+
+disability = st.sidebar.selectbox(
+    "Disability Status",
+    options=[0, 1],
+    format_func=lambda x: "No" if x == 0 else "Yes",
+    help="1 = disability (ADL/IADL impaired), 0 = no disability."
+)
+
+predict_btn = st.sidebar.button("🔍 Predict & Explain", type="primary")
+
+# 主区域：显示预测和 SHAP 图
+
+if predict_btn:
+    # 构造输入 DataFrame（注意列名必须与训练时一致）
+    input_df = pd.DataFrame({
+        'age': [age],
+        'BMI': [bmi],                      # 训练时列名是 'BMI'
+        'total_cognition': [cognition],
+        'disability': [disability]
+    })
+
+    # 标准化
+    input_scaled = scaler.transform(input_df)
+
+    # 预测概率
+    prob = model.predict_proba(input_scaled)[0, 1]
+
+    # ---------- 预测结果显示 ----------
+    st.subheader("📊 Prediction Result")
+    col1, col2, col3 = st.columns(3)
+
+    # 风险等级自定义阈值
+    if prob < 0.10:
+        risk_level = "Low"
+        color = "green"
+    elif prob < 0.25:
+        risk_level = "Moderate"
+        color = "orange"
+    else:
+        risk_level = "High"
+        color = "red"
+
+    with col1:
+        st.metric("4-Year Sarcopenia Risk", f"{prob:.2%}")
+    with col2:
+        st.metric("Risk Level", risk_level, delta=None)
+    with col3:
+        if prob >= 0.20:
+            st.warning("⚠️ Consider further assessment")
+        else:
+            st.success("✅ Low risk, routine monitoring")
+
+    # 进度条
+    st.progress(min(prob, 1.0))
+
+    # 解释文本
+    st.caption(
+        f"""
+        **Risk interpretation**  
+        - **Low**  (< 10%)  : Regular follow-up recommended.  
+        - **Moderate** (10% – 25%) : Clinical awareness and lifestyle intervention.  
+        - **High** (> 25%) : Comprehensive geriatric assessment and specialized care.
+        """
+    )
+
+    # ---------- SHAP 力图 ----------
+    st.markdown("---")
+    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
+    
+    input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
+    shap_values = explainer.shap_values(input_scaled_df)
+    # 生成力图的 HTML（force_plot 需要 base_value, shap_values, features）
+    # 注意：explainer.expected_value 是基础风险（log-odds），在二分类中是一个数值
+    force_plot_html = shap.force_plot(
+        explainer.expected_value,
+        shap_values[0, :],
+        input_scaled_df.iloc[0, :],
+        matplotlib=False,
+        show=False
+    )
+
+    # 在 Streamlit 中嵌入 HTML
+    html(force_plot_html, height=300, width=700)
+
+    # 额外显示输入回顾
+    with st.expander("📋 Input Summary"):
+        st.write(f"**Age**: {age} years")
+        st.write(f"**BMI**: {bmi:.1f} kg/m²")
+        st.write(f"**Total Cognition**: {cognition:.1f}")
+        st.write(f"**Disability**: {'Yes' if disability==1 else 'No'}")
+
+else:
+    st.info("👈 Enter patient data in the sidebar and click **Predict & Explain**.")
+    st.markdown(
+        """
+        **Features used in the model:**  
+        - **Age** : years  
+        - **BMI** : kg/m²  
+        - **Total Cognition Score** : cognitive function  
+        - **Disability** : ADL/IADL impairment (Yes/No)  
+        """
+    )
+
+# -------------------------------
+# 页脚
+# -------------------------------
+st.markdown("---")
+st.caption("© 2026 CLD Sarcopenia Predictor | Model based on CHARLS data | SHAP for interpretability")
+
+
+# In[2]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
