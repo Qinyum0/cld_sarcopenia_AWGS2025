@@ -91,9 +91,9 @@ if predict_btn:
     col1, col2, col3 = st.columns(3)
 
     # 风险等级自定义阈值
-    if prob < 0.10:
+    if prob < 0.017:
         risk_level = "Low"
-    elif prob < 0.25:
+    elif prob < 0.075:
         risk_level = "Moderate"
     else:
         risk_level = "High"
