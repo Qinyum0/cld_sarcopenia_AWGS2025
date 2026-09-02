@@ -8,7 +8,6 @@ import joblib
 import shap
 import matplotlib.pyplot as plt
 
-
 # 设置页面配置
 st.set_page_config(
     page_title="CLD Sarcopenia Risk Predictor",
@@ -90,33 +89,40 @@ if predict_btn:
     st.subheader("📊 Prediction Result")
     col1, col2, col3 = st.columns(3)
 
-    # 风险等级自定义阈值（基于训练集 P33=0.0165, P66=0.0746）
-    if prob < 0.017:
+    # 风险等级自定义阈值
+    if prob < 0.10:
         risk_level = "Low"
-        risk_message = "✅ Low risk, routine monitoring"
-    elif prob < 0.07:
+    elif prob < 0.25:
         risk_level = "Moderate"
-        risk_message = "⚠️ Moderate risk, consider further assessment"
     else:
         risk_level = "High"
-        risk_message = "🔴 High risk, comprehensive evaluation and intervention"
 
     with col1:
         st.metric("Sarcopenia Risk", f"{prob:.2%}")
     with col2:
         st.metric("Risk Level", risk_level, delta=None)
     with col3:
-        # 根据风险等级显示对应建议
-        if risk_level == "Low":
-            st.success(risk_message)
-        elif risk_level == "Moderate":
-            st.warning(risk_message)
+        if prob >= 0.20:
+            st.warning("⚠️ Consider further assessment")
         else:
-            st.error(risk_message)
+            st.success("✅ Low risk, routine monitoring")
+
+    # 进度条
+    st.progress(min(float(prob), 1.0))
+
+    # 解释文本
+    st.caption(
+        f"""
+        **Risk interpretation**  
+        - **Low**  (< 10%)  : Regular follow-up recommended.  
+        - **Moderate** (10% – 25%) : Clinical awareness and lifestyle intervention.  
+        - **High** (> 25%) : Comprehensive geriatric assessment and specialized care.
+        """
+    )
 
     # ---------- SHAP 力图（使用 matplotlib 静态图） ----------
     st.markdown("---")
-    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
+    st.subheader("🔍 SHAP Force Plot ")
 
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
 
@@ -143,17 +149,6 @@ if predict_btn:
 
     # 显示图形
     st.pyplot(force_plot_fig, bbox_inches='tight')
-
-    # ---------- Risk Interpretation（移至 SHAP 图之后） ----------
-    st.markdown("---")
-    st.caption(
-        f"""
-        **Risk interpretation**  
-        - **Low**  (< 1.7%)  : Routine monitoring recommended.  
-        - **Moderate** (1.7% – 7.0%) : Clinical awareness and lifestyle intervention.  
-        - **High** (> 7.0%) : Comprehensive geriatric assessment and specialized care.
-        """
-    )
 
     # 额外显示输入回顾
     with st.expander("📋 Input Summary"):
