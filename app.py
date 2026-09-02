@@ -107,16 +107,14 @@ if predict_btn:
         else:
             st.success("✅ Low risk, routine monitoring")
 
-    # 进度条
-    st.progress(min(float(prob), 1.0))
 
     # 解释文本
     st.caption(
         f"""
         **Risk interpretation**  
-        - **Low**  (< 10%)  : Regular follow-up recommended.  
-        - **Moderate** (10% – 25%) : Clinical awareness and lifestyle intervention.  
-        - **High** (> 25%) : Comprehensive geriatric assessment and specialized care.
+        - **Low**   : Regular follow-up recommended.  
+        - **Moderate**  : Clinical awareness and lifestyle intervention.  
+        - **High**  : Comprehensive geriatric assessment and specialized care.
         """
     )
 
