@@ -7,7 +7,7 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
-from streamlit.components.v1 import html
+from streamlit.components.v1 import html  # 此导入保留但本版本未使用，可删除
 
 # 设置页面配置
 st.set_page_config(
@@ -40,7 +40,7 @@ except FileNotFoundError as e:
     st.error(f"❌ Model files not found: {e}. Ensure 'cld_sarcopenia_model.pkl' and 'scaler.pkl' are in the current directory.")
     st.stop()
 
-# 侧边栏：输入参数
+# 侧边栏：输入参数（使用滑块）
 st.sidebar.header("Patient Input")
 
 age = st.sidebar.slider(
@@ -57,7 +57,7 @@ bmi = st.sidebar.slider(
 
 cognition = st.sidebar.slider(
     "Total Cognition Score",
-    min_value=0.0, max_value=30.0, value=15.0, step=0.5,
+    min_value=0.0, max_value=30.0, value=11.0, step=0.5,
     help="Higher score indicates better cognitive function."
 )
 
@@ -72,7 +72,7 @@ predict_btn = st.sidebar.button("🔍 Predict & Explain", type="primary")
 
 # 主区域：显示预测和 SHAP 图
 if predict_btn:
-    # 构造输入 DataFrame（注意列名必须与训练时一致）
+    # 构造输入 DataFrame（列名必须与训练时一致）
     input_df = pd.DataFrame({
         'age': [age],
         'BMI': [bmi],                      # 训练时列名是 'BMI'
@@ -93,13 +93,10 @@ if predict_btn:
     # 风险等级自定义阈值
     if prob < 0.10:
         risk_level = "Low"
-        color = "green"
     elif prob < 0.25:
         risk_level = "Moderate"
-        color = "orange"
     else:
         risk_level = "High"
-        color = "red"
 
     with col1:
         st.metric("Sarcopenia Risk", f"{prob:.2%}")
@@ -124,32 +121,35 @@ if predict_btn:
         """
     )
 
-    # ---------- SHAP 力图 ----------
+    # ---------- SHAP 力图（使用 matplotlib 静态图） ----------
     st.markdown("---")
-    st.subheader("🔍 SHAP Force Plot ")
+    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
 
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
+
     # 计算 SHAP 值
     shap_values = explainer.shap_values(input_scaled_df)
-    # 如果是列表（多分类），取正类
-if isinstance(shap_values, list):
-    shap_values = shap_values[1]
-# 生成力图（返回 matplotlib figure）
-force_plot_fig = shap.force_plot(
-    explainer.expected_value,
-    shap_values[0, :],
-    input_scaled_df.iloc[0, :],
-    matplotlib=True,          # 关键：返回 matplotlib 图形
-    show=False
-)
-    # 强制转换为字符串
-    force_plot_html = str(force_plot_html)
 
-    # 在 Streamlit 中嵌入 HTML
-    if force_plot_html.strip():
-        html(force_plot_html, height=300, width=700)
-    else:
-        st.warning("Unable to render SHAP force plot. Please check model compatibility.")
+    # 处理二分类情况：shap_values 可能是列表（正类索引为1）或数组
+    if isinstance(shap_values, list):
+        shap_values = shap_values[1]   # 取正类
+
+    # 处理 expected_value：可能是标量或数组（取正类）
+    expected_value = explainer.expected_value
+    if isinstance(expected_value, (list, np.ndarray)):
+        expected_value = expected_value[1]   # 取正类
+
+    # 生成力图（返回 matplotlib figure）
+    force_plot_fig = shap.force_plot(
+        expected_value,
+        shap_values[0, :],
+        input_scaled_df.iloc[0, :],
+        matplotlib=True,
+        show=False
+    )
+
+    # 显示图形
+    st.pyplot(force_plot_fig, bbox_inches='tight')
 
     # 额外显示输入回顾
     with st.expander("📋 Input Summary"):
