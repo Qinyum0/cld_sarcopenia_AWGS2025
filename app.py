@@ -149,9 +149,9 @@ if predict_btn:
 force_plot_html = str(force_plot_html)
 
 # 在 Streamlit 中嵌入 HTML
-if force_plot_html.strip():
+if force_plot_html.strip():          
     html(force_plot_html, height=300, width=700)
-else:
+else:                               # ← 与 if 对齐（相同缩进）
     st.warning("Unable to render SHAP force plot. Please check model compatibility.")
 
     # 额外显示输入回顾
