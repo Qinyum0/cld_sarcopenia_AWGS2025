@@ -7,7 +7,7 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
-from streamlit.components.v1 import html  # 此导入保留但本版本未使用，可删除
+
 
 # 设置页面配置
 st.set_page_config(
@@ -90,7 +90,7 @@ if predict_btn:
     st.subheader("📊 Prediction Result")
     col1, col2, col3 = st.columns(3)
 
-    # 风险等级自定义阈值
+    # 风险等级自定义阈值（基于训练集 P33=0.0165, P66=0.0746）
     if prob < 0.017:
         risk_level = "Low"
         risk_message = "✅ Low risk, routine monitoring"
@@ -114,20 +114,9 @@ if predict_btn:
         else:
             st.error(risk_message)
 
-
-    # 解释文本
-    st.caption(
-        f"""
-        **Risk interpretation**  
-        - **Low**    : Regular follow-up recommended.  
-        - **Moderate**  : Clinical awareness and lifestyle intervention.  
-        - **High**  : Comprehensive geriatric assessment and specialized care.
-        """
-    )
-
     # ---------- SHAP 力图（使用 matplotlib 静态图） ----------
     st.markdown("---")
-    st.subheader("🔍 SHAP Force Plot ")
+    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
 
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
 
@@ -138,7 +127,7 @@ if predict_btn:
     if isinstance(shap_values, list):
         shap_values = shap_values[1]   # 取正类
 
-    # 处理 expected_value：（取正类）
+    # 处理 expected_value：可能是标量或数组（取正类）
     expected_value = explainer.expected_value
     if isinstance(expected_value, (list, np.ndarray)):
         expected_value = expected_value[1]   # 取正类
@@ -154,6 +143,17 @@ if predict_btn:
 
     # 显示图形
     st.pyplot(force_plot_fig, bbox_inches='tight')
+
+    # ---------- Risk Interpretation（移至 SHAP 图之后） ----------
+    st.markdown("---")
+    st.caption(
+        f"""
+        **Risk interpretation**  
+        - **Low**  (< 1.7%)  : Routine monitoring recommended.  
+        - **Moderate** (1.7% – 7.0%) : Clinical awareness and lifestyle intervention.  
+        - **High** (> 7.0%) : Comprehensive geriatric assessment and specialized care.
+        """
+    )
 
     # 额外显示输入回顾
     with st.expander("📋 Input Summary"):
