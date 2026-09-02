@@ -114,8 +114,6 @@ if predict_btn:
         else:
             st.error(risk_message)
 
-    # 进度条
-    st.progress(min(float(prob), 1.0))
 
     # 解释文本
     st.caption(
@@ -140,7 +138,7 @@ if predict_btn:
     if isinstance(shap_values, list):
         shap_values = shap_values[1]   # 取正类
 
-    # 处理 expected_value：可能是标量或数组（取正类）
+    # 处理 expected_value：（取正类）
     expected_value = explainer.expected_value
     if isinstance(expected_value, (list, np.ndarray)):
         expected_value = expected_value[1]   # 取正类
