@@ -148,7 +148,7 @@ if predict_btn:
 # 强制转换为字符串
 force_plot_html = str(force_plot_html)
 
-    # 在 Streamlit 中嵌入 HTML
+# 在 Streamlit 中嵌入 HTML
 if force_plot_html.strip():
     html(force_plot_html, height=300, width=700)
 else:
