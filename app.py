@@ -97,7 +97,7 @@ if predict_btn:
         risk_message = "⚠️ Moderate risk, consider further assessment"
     else:
         risk_level = "High"
-        risk_message = "🔴 High risk, comprehensive evaluation and intervention"
+        risk_message = "🚨 High risk, comprehensive evaluation and intervention"
 
     with col1:
         st.metric("Sarcopenia Risk", f"{prob:.2%}")
