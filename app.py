@@ -103,12 +103,12 @@ if predict_btn:
     with col2:
         st.metric("Risk Level", risk_level, delta=None)
     with col3:
-        if risk_level == "Low":
+    if risk_level == "Low":
         st.success("✅ Routine monitoring recommended")
     elif risk_level == "Moderate":
         st.warning("⚠️ Consider further assessment")
     else:  # High
-        st.error("🚨 Further evaluation and intervention advised")
+        st.error("🚨 Comprehensive evaluation and intervention advised")
 
     # 进度条
     st.progress(min(float(prob), 1.0))
