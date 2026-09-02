@@ -15,7 +15,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🫁 Sarcopenia Risk Predictor")
+st.title("🫁 New-Onset Sarcopenia Risk Predictor")
 st.markdown(
     """
     **For patients with Chronic Lung Disease (CLD)**  
@@ -176,4 +176,4 @@ else:
 # 页脚
 # -------------------------------
 st.markdown("---")
-st.caption("© 2026 CLD Sarcopenia Predictor | Model based on CHARLS data | SHAP for interpretability")
+st.caption("© 2026 Incident Sarcopenia Prediction Model for CLD Patients | Model based on CHARLS data | SHAP for interpretability")
