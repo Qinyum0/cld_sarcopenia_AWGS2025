@@ -135,19 +135,24 @@ if predict_btn:
     st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
     
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
+    # 计算 SHAP 值
     shap_values = explainer.shap_values(input_scaled_df)
-    # 生成力图的 HTML（force_plot 需要 base_value, shap_values, features）
-    # 注意：explainer.expected_value 是基础风险（log-odds），在二分类中是一个数值
+    # 生成力图的 HTML
     force_plot_html = shap.force_plot(
-        explainer.expected_value,
-        shap_values[0, :],
-        input_scaled_df.iloc[0, :],
-        matplotlib=False,
-        show=False
-    )
+    explainer.expected_value,
+    shap_values[0, :],
+    input_scaled_df.iloc[0, :],
+    matplotlib=False,
+    show=False
+)
+# 强制转换为字符串
+force_plot_html = str(force_plot_html)
 
     # 在 Streamlit 中嵌入 HTML
+    if force_plot_html.strip():
     html(force_plot_html, height=300, width=700)
+else:
+    st.warning("Unable to render SHAP force plot. Please check model compatibility.")
 
     # 额外显示输入回顾
     with st.expander("📋 Input Summary"):
@@ -164,7 +169,7 @@ else:
         - **Age** : years  
         - **BMI** : kg/m²  
         - **Total Cognition Score** : cognitive function  
-        - **Disability** : ADL/IADL impairment (Yes/No)  
+        - **Disability** : Yes/No  
         """
     )
 
