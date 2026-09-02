@@ -19,7 +19,8 @@ st.title("🫁 Sarcopenia Risk Predictor")
 st.markdown(
     """
     **For patients with Chronic Lung Disease (CLD)**  
-    This tool estimates the risk of developing **sarcopenia** based on four clinical features. 
+    This tool estimates the risk of developing **sarcopenia** based on 
+    four clinical features. 
     The **SHAP force plot** below illustrates how each feature contributes to the individual prediction.
     """
 )
