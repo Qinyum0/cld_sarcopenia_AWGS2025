@@ -126,19 +126,22 @@ if predict_btn:
 
     # ---------- SHAP 力图 ----------
     st.markdown("---")
-    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
+    st.subheader("🔍 SHAP Force Plot ")
 
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
     # 计算 SHAP 值
     shap_values = explainer.shap_values(input_scaled_df)
-    # 生成力图的 HTML
-    force_plot_html = shap.force_plot(
-        explainer.expected_value,
-        shap_values[0, :],
-        input_scaled_df.iloc[0, :],
-        matplotlib=False,
-        show=False
-    )
+    # 如果是列表（多分类），取正类
+if isinstance(shap_values, list):
+    shap_values = shap_values[1]
+# 生成力图（返回 matplotlib figure）
+force_plot_fig = shap.force_plot(
+    explainer.expected_value,
+    shap_values[0, :],
+    input_scaled_df.iloc[0, :],
+    matplotlib=True,          # 关键：返回 matplotlib 图形
+    show=False
+)
     # 强制转换为字符串
     force_plot_html = str(force_plot_html)
 
