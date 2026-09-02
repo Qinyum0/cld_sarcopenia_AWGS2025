@@ -51,7 +51,7 @@ age = st.sidebar.slider(
 
 bmi = st.sidebar.slider(
     "BMI (kg/m²)",
-    min_value=10.0, max_value=50.0, value=18.0, step=0.1,
+    min_value=10.0, max_value=40.0, value=18.0, step=0.1,
     help="Body Mass Index (weight / height²)."
 )
 
@@ -65,7 +65,7 @@ disability = st.sidebar.selectbox(
     "Disability Status",
     options=[0, 1],
     format_func=lambda x: "No" if x == 0 else "Yes",
-    help="1 = disability, 0 = no disability."
+    help="yes = disability, no = no disability."
 )
 
 predict_btn = st.sidebar.button("🔍 Predict & Explain", type="primary")
@@ -123,7 +123,7 @@ if predict_btn:
 
     # ---------- SHAP 力图（使用 matplotlib 静态图） ----------
     st.markdown("---")
-    st.subheader("🔍 SHAP Force Plot (Why this prediction?)")
+    st.subheader("🔍 SHAP Force Plot ")
 
     input_scaled_df = pd.DataFrame(input_scaled, columns=input_df.columns)
 
