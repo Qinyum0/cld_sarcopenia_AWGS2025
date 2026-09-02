@@ -91,9 +91,9 @@ if predict_btn:
     col1, col2, col3 = st.columns(3)
 
     # 风险等级自定义阈值
-    if prob < 0.017:          # 约等于 1.7%
+    if prob < 0.10:
         risk_level = "Low"
-    elif prob < 0.07:         # 约等于 7.0%
+    elif prob < 0.25:
         risk_level = "Moderate"
     else:
         risk_level = "High"
@@ -103,12 +103,10 @@ if predict_btn:
     with col2:
         st.metric("Risk Level", risk_level, delta=None)
     with col3:
-    if risk_level == "Low":
-        st.success("✅ Routine monitoring recommended")
-    elif risk_level == "Moderate":
-        st.warning("⚠️ Consider further assessment")
-    else:  # High
-        st.error("🚨 Comprehensive evaluation and intervention advised")
+        if prob >= 0.20:
+            st.warning("⚠️ Consider further assessment")
+        else:
+            st.success("✅ Low risk, routine monitoring")
 
     # 进度条
     st.progress(min(float(prob), 1.0))
