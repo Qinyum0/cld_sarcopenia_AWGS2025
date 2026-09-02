@@ -19,9 +19,8 @@ st.title("🫁 Sarcopenia Risk Predictor")
 st.markdown(
     """
     **For patients with Chronic Lung Disease (CLD)**  
-    This tool predicts the probability of developing **sarcopenia**  
-    based on four clinical features. Below the prediction, an interactive SHAP force plot  
-    explains how each feature contributes to the individual prediction.
+    This tool estimates the risk of developing **sarcopenia** based on four clinical features. 
+    The SHAP force plot below illustrates how each feature contributes to the individual prediction.
     """
 )
 
@@ -40,7 +39,7 @@ except FileNotFoundError as e:
     st.stop()
 
 # 侧边栏：输入参数（使用滑块）
-st.sidebar.header("Patient Input")
+st.sidebar.header("Patient Input ⬇️")
 
 age = st.sidebar.slider(
     "Age (years)",
