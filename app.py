@@ -155,7 +155,7 @@ else:
     st.warning("SHAP force plot could not be generated.")
 
     # 在 Streamlit 中嵌入 HTML
-    if force_plot_html.strip():
+if force_plot_html.strip():
     html(force_plot_html, height=300, width=700)
 else:
     st.warning("Unable to render SHAP force plot. Please check model compatibility.")
