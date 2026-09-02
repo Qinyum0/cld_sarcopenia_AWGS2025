@@ -107,7 +107,7 @@ if predict_btn:
         color = "red"
 
     with col1:
-        st.metric("4-Year Sarcopenia Risk", f"{prob:.2%}")
+        st.metric("Sarcopenia Risk", f"{prob:.2%}")
     with col2:
         st.metric("Risk Level", risk_level, delta=None)
     with col3:
@@ -117,7 +117,7 @@ if predict_btn:
             st.success("✅ Low risk, routine monitoring")
 
     # 进度条
-    st.progress(float(prob, 1.0))
+    st.progress(min(float(prob), 1.0))
 
     # 解释文本
     st.caption(
