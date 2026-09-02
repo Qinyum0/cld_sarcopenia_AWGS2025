@@ -88,23 +88,29 @@ if predict_btn:
     st.subheader("📊 Prediction Result")
     col1, col2, col3 = st.columns(3)
 
-    # 风险等级自定义阈值
-    if prob < 0.10:
+    # 风险等级自定义阈值（基于训练集 P33=0.0165, P66=0.0746）
+    if prob < 0.017:
         risk_level = "Low"
-    elif prob < 0.25:
+        risk_message = "✅ Low risk, routine monitoring"
+    elif prob < 0.07:
         risk_level = "Moderate"
+        risk_message = "⚠️ Moderate risk, consider further assessment"
     else:
         risk_level = "High"
+        risk_message = "🔴 High risk, comprehensive evaluation and intervention"
 
     with col1:
         st.metric("Sarcopenia Risk", f"{prob:.2%}")
     with col2:
         st.metric("Risk Level", risk_level, delta=None)
     with col3:
-        if prob >= 0.20:
-            st.warning("⚠️ Consider further assessment")
+        # 根据风险等级显示对应建议
+        if risk_level == "Low":
+            st.success(risk_message)
+        elif risk_level == "Moderate":
+            st.warning(risk_message)
         else:
-            st.success("✅ Low risk, routine monitoring")
+            st.error(risk_message)
 
 
     # 解释文本
