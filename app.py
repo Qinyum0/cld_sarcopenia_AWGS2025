@@ -43,19 +43,19 @@ except FileNotFoundError as e:
 # 侧边栏：输入参数
 st.sidebar.header("Patient Input")
 
-age = st.sidebar.number_input(
+age = st.sidebar.slider(
     "Age (years)",
-    min_value=40, max_value=100, value=65, step=1,
+    min_value=50, max_value=100, value=65, step=1,
     help="Age in years."
 )
 
-bmi = st.sidebar.number_input(
+bmi = st.sidebar.slider(
     "BMI (kg/m²)",
-    min_value=10.0, max_value=50.0, value=24.0, step=0.1,
+    min_value=10.0, max_value=50.0, value=18.0, step=0.1,
     help="Body Mass Index (weight / height²)."
 )
 
-cognition = st.sidebar.number_input(
+cognition = st.sidebar.slider(
     "Total Cognition Score",
     min_value=0.0, max_value=30.0, value=15.0, step=0.5,
     help="Higher score indicates better cognitive function."
