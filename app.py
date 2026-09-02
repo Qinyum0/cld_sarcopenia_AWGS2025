@@ -10,6 +10,7 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
+from streamlit.components.v1 import html
 
 # 设置页面配置
 st.set_page_config(
