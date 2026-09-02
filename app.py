@@ -22,7 +22,7 @@ st.title("🫁Sarcopenia Risk Predictor")
 st.markdown(
     """
     **For patients with Chronic Lung Disease (CLD)**  
-    This tool predicts the probability of developing **sarcopenia within 4 years**  
+    This tool predicts the probability of developing **sarcopenia**  
     based on four clinical features. Below the prediction, an interactive SHAP force plot  
     explains how each feature contributes to the individual prediction.
     """
@@ -69,7 +69,7 @@ disability = st.sidebar.selectbox(
     "Disability Status",
     options=[0, 1],
     format_func=lambda x: "No" if x == 0 else "Yes",
-    help="1 = disability (ADL/IADL impaired), 0 = no disability."
+    help="1 = disability , 0 = no disability."
 )
 
 predict_btn = st.sidebar.button("🔍 Predict & Explain", type="primary")
@@ -117,7 +117,7 @@ if predict_btn:
             st.success("✅ Low risk, routine monitoring")
 
     # 进度条
-    st.progress(min(prob, 1.0))
+    st.progress(float(prob, 1.0))
 
     # 解释文本
     st.caption(
