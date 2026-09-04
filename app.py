@@ -55,7 +55,7 @@ bmi = st.sidebar.slider(
 
 cognition = st.sidebar.slider(
     "Total Cognition Score",
-    min_value=0.0, max_value=31.0, value=11.5, step=0.5,
+    min_value=0.0, max_value=31.5, value=10.5, step=0.5,
     help="Higher score indicates better cognitive function."
 )
 
